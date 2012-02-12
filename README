@@ -1,0 +1,22 @@
+由于网络上下载的一个貌似delphi写的PortMap v1.6版本的工具频率崩溃, 于是花了1小时重写了一个用于做端口映射的工具程序, 虽然简单, 但却实用, 本来想再添加一个日志和GUI, 来保存各链接数据收发统计情况, 但是由于个人时间有限, 所以希望有好心人参与完善等其它额外功能.
+
+
+编译说明:
+必须条件: boost, vc2003以上或gcc...
+在windows上直接使用vc2003以上版本打开portmap.sln即可编译.
+
+编译参数:
+定义LOGGER_OUTPUT_LOG宏表示打开日志输出功能.
+定义LOGGER_DEBUG_VIEW表示打开debugview调试功能, 仅能在win32平台下使用.
+定义LOGGER_THREAD_SAFE表示日志输出使用线程安全.
+
+
+若使用bjam进行编译, 则需要设置环境变量
+	BOOST_ROOT=BOOST的ROOT目录
+	BOOST_BUILD_PATH=$(BOOST_ROOT)/tools/build/v2
+然后执行
+	bjam
+即可编译.
+
+
+

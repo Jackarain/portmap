@@ -1,0 +1,85 @@
+import stage ;
+import os ;
+import modules ;
+import errors ;
+import feature : feature ;
+import package ;
+import virtual-target ;
+
+BOOST_ROOT = [ modules.peek : BOOST_ROOT ] ;
+OS = [ os.name ] ;
+
+#输出环境变量BOOST_ROOT.
+ECHO "BOOST_ROOT =" $(BOOST_ROOT) ;
+ECHO "OS =" [ os.name ] ;
+
+local boost-library-search-path =
+	<search>/opt/local/lib
+	<search>/usr/lib
+	<search>/usr/local/lib
+	;
+
+lib boost_thread : : <name>boost_thread $(boost-library-search-path) ;
+lib boost_system : : <name>boost_system $(boost-library-search-path) ;
+lib boost_program_options : : <name>boost_program_options $(boost-library-search-path) ;
+lib boost_regex : : <name>boost_regex $(boost-library-search-path) ;
+lib boost_filesystem : : <name>boost_filesystem $(boost-library-search-path) ;
+lib pthread : : <name>pthread $(boost-library-search-path) ;
+
+rule linking ( properties * )
+{
+	local result ;
+
+	if $(OS) = "NT"
+	{
+		result += <library-path>$(BOOST_ROOT:T)/stage/vc80lib ;
+		result += <library-path>$(BOOST_ROOT:T)/stage/lib ;
+		result += <linkflags>"user32.lib gdi32.lib kernel32.lib winspool.lib comdlg32.lib advapi32.lib" ;
+		result += <define>WIN32 ;
+		result += <define>_WIN32_WINNT=0x0501 ;
+		result += <define>_CONSOLE ;
+		result += <define>_CRT_SECURE_NO_WARNINGS ;
+		result += <define>_SCL_SECURE_NO_WARNINGS ;
+	}
+
+	if $(OS) = "LINUX"
+	{
+		result += 
+		<library>boost_thread
+		<library>boost_system
+		<library>boost_program_options
+		<library>boost_regex
+		<library>boost_filesystem
+		<library-path>$(BOOST_ROOT:T)/stage/lib
+		;
+	}
+	return $(result) ;
+}
+
+local usage-requirements =
+	<conditional>@linking
+	;
+
+project PortMap : requirements
+	<include>.
+	<include>$(BOOST_ROOT:T)
+	<warnings>off
+	: build-dir bin
+	;
+
+SOURCES =
+	stdafx.cpp
+	netmap.cpp
+	portmap.cpp
+	logger.cpp
+	;
+
+exe PortMap 
+	: $(SOURCES)
+	: $(usage-requirements)
+	:
+	<link>static
+	<runtime-link>static
+	<threading>multi
+	;
+

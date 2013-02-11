@@ -29,7 +29,6 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/program_options.hpp>
 #include <boost/regex.hpp>
-#define BOOST_FILESYSTEM_VERSION 2
 #include <boost/filesystem.hpp>
 
 using boost::asio::ip::tcp;

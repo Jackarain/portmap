@@ -1,4 +1,3 @@
-
 端口映射器
 ============
 
@@ -6,9 +5,9 @@
 
 
 编译说明:
-依赖boost, 编译器vc2003以上或gcc, 目前运行平台支持windows和linux.
+依赖boost, 编译器vc2005或以上或gcc, 目前运行平台支持windows和linux.
 
-在windows上直接使用vc2003以上版本打开portmap.sln即可编译.
+在windows上直接使用vc2005或以上版本打开portmap.sln即可编译.
 
 在linux平台可使用boost的bjam进行编译.
 

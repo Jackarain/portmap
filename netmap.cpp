@@ -34,6 +34,8 @@ void portmap_session::start()
       m_user_cnt++;
    }
 
+   m_local_socket.set_option(tcp::no_delay(true), ignored_ec);
+
    m_local_host = m_local_socket.remote_endpoint(ignored_ec);
    log_info("Id: " << m_user_cnt << ", IP: "
       << m_local_host.address().to_string(ignored_ec).c_str() 
@@ -123,6 +125,8 @@ void portmap_session::remote_connect(const boost::system::error_code& err)
 {
    if (!err)
    {
+      boost::system::error_code ignored_ec;
+      m_remote_socket.set_option(tcp::no_delay(true), ignored_ec);
       // 连接成功, 发起一个读请求.
       m_remote_socket.async_read_some(boost::asio::buffer(m_remote_buffer),
          make_custom_alloc_handler(m_allocator,

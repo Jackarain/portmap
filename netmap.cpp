@@ -46,13 +46,6 @@ void portmap_session::start()
       make_custom_alloc_handler(m_allocator,
       boost::bind(&portmap_session::remote_connect, shared_from_this(),
       boost::asio::placeholders::error)));
-
-   // 读取本地链接数据.
-   m_local_socket.async_read_some(boost::asio::buffer(m_local_buffer), 
-      make_custom_alloc_handler(m_allocator, 
-      boost::bind(&portmap_session::handle_local_read, shared_from_this(),
-      boost::asio::placeholders::error,
-      boost::asio::placeholders::bytes_transferred)));
 }
 
 void portmap_session::close()
@@ -133,6 +126,12 @@ void portmap_session::remote_connect(const boost::system::error_code& err)
          boost::bind(&portmap_session::handle_remote_read, shared_from_this(),
          boost::asio::placeholders::error,
          boost::asio::placeholders::bytes_transferred)));
+	  // 读取本地链接数据.
+	  m_local_socket.async_read_some(boost::asio::buffer(m_local_buffer),
+		  make_custom_alloc_handler(m_allocator,
+		  boost::bind(&portmap_session::handle_local_read, shared_from_this(),
+		  boost::asio::placeholders::error,
+		  boost::asio::placeholders::bytes_transferred)));
    }
    else
    {

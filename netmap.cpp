@@ -17,7 +17,7 @@ portmap_session::~portmap_session()
 
    log_info("Id: " << m_user_cnt << ", IP: " << 
       m_local_host.address().to_string(ignored_ec).c_str() << " : " 
-      << m_local_host.port() << " Àë¿ª.\n");
+      << m_local_host.port() << " ç¦»å¼€.\n");
 
    {
       boost::mutex::scoped_lock lock(m_user_mtx);
@@ -39,9 +39,9 @@ void portmap_session::start()
    m_local_host = m_local_socket.remote_endpoint(ignored_ec);
    log_info("Id: " << m_user_cnt << ", IP: "
       << m_local_host.address().to_string(ignored_ec).c_str() 
-      << " : " << m_local_host.port() << " ½øÀ´.\n");
+      << " : " << m_local_host.port() << " è¿›æ¥.\n");
 
-   // ·¢ÆğÔ¶³ÌÁ¬½Ó.
+   // å‘èµ·è¿œç¨‹è¿æ¥.
    m_remote_socket.async_connect(m_remote_host, 
       make_custom_alloc_handler(m_allocator,
       boost::bind(&portmap_session::remote_connect, shared_from_this(),
@@ -52,7 +52,7 @@ void portmap_session::close()
 {
    boost::system::error_code ignored_ec;
 
-   // Ô¶³ÌºÍ±¾µØÁ´½Ó¶¼½«¹Ø±Õ.
+   // è¿œç¨‹å’Œæœ¬åœ°é“¾æ¥éƒ½å°†å…³é—­.
    m_local_socket.shutdown(
       boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
    m_local_socket.close(ignored_ec);
@@ -66,10 +66,10 @@ void portmap_session::handle_local_read(const boost::system::error_code& error,
 {
    if (!error)
    {
-      // ·¢ËÍµ½remote.
+      // å‘é€åˆ°remote.
       remote_write(m_local_buffer.data(), bytes_transferred);
 
-      // ¼ÌĞø½ÓÊÕlocalÊı¾İ.
+      // ç»§ç»­æ¥æ”¶localæ•°æ®.
       m_local_socket.async_read_some(boost::asio::buffer(m_local_buffer),
          make_custom_alloc_handler(m_allocator,
          boost::bind(&portmap_session::handle_local_read, shared_from_this(),
@@ -87,7 +87,7 @@ void portmap_session::handle_local_write(boost::shared_ptr<std::vector<char> > b
 {
    if (!error)
    {
-      // ¼ÌĞø·¢ËÍÎ´·¢ËÍÍê³ÉµÄÊı¾İ.
+      // ç»§ç»­å‘é€æœªå‘é€å®Œæˆçš„æ•°æ®.
       if (bytes_transferred != buffer->size())
       {
          local_write(&(*(buffer->begin() + bytes_transferred)), 
@@ -105,7 +105,7 @@ void portmap_session::local_write(const char* buffer, int buffer_length)
    boost::shared_ptr<std::vector<char> > buf(new 
       std::vector<char>(buffer, buffer + buffer_length));
 
-   // ·¢ËÍÊı¾İ.
+   // å‘é€æ•°æ®.
    m_local_socket.async_write_some(boost::asio::buffer(*buf),
       make_custom_alloc_handler(m_allocator, 
       boost::bind(&portmap_session::handle_local_write, 
@@ -120,13 +120,13 @@ void portmap_session::remote_connect(const boost::system::error_code& err)
    {
       boost::system::error_code ignored_ec;
       m_remote_socket.set_option(tcp::no_delay(true), ignored_ec);
-      // Á¬½Ó³É¹¦, ·¢ÆğÒ»¸ö¶ÁÇëÇó.
+      // è¿æ¥æˆåŠŸ, å‘èµ·ä¸€ä¸ªè¯»è¯·æ±‚.
       m_remote_socket.async_read_some(boost::asio::buffer(m_remote_buffer),
          make_custom_alloc_handler(m_allocator,
          boost::bind(&portmap_session::handle_remote_read, shared_from_this(),
          boost::asio::placeholders::error,
          boost::asio::placeholders::bytes_transferred)));
-	  // ¶ÁÈ¡±¾µØÁ´½ÓÊı¾İ.
+	  // è¯»å–æœ¬åœ°é“¾æ¥æ•°æ®.
 	  m_local_socket.async_read_some(boost::asio::buffer(m_local_buffer),
 		  make_custom_alloc_handler(m_allocator,
 		  boost::bind(&portmap_session::handle_local_read, shared_from_this(),
@@ -144,10 +144,10 @@ void portmap_session::handle_remote_read(const boost::system::error_code& error,
 {
    if (!error)
    {
-      // ·¢ËÍµ½local.
+      // å‘é€åˆ°local.
       local_write(m_remote_buffer.data(), bytes_transferred);
 
-      // ¼ÌĞø½ÓÊÕremoteµÄÊı¾İ.
+      // ç»§ç»­æ¥æ”¶remoteçš„æ•°æ®.
       m_remote_socket.async_read_some(boost::asio::buffer(m_remote_buffer),
          make_custom_alloc_handler(m_allocator,
          boost::bind(&portmap_session::handle_remote_read, shared_from_this(),
@@ -165,7 +165,7 @@ void portmap_session::handle_remote_write(boost::shared_ptr<std::vector<char> > 
 {
    if (!error)
    {
-      // ¼ÌĞø·¢ËÍÎ´·¢ËÍÍê³ÉµÄÊı¾İ.
+      // ç»§ç»­å‘é€æœªå‘é€å®Œæˆçš„æ•°æ®.
       if (bytes_transferred != buffer->size())
       {
          remote_write(&(*(buffer->begin() + bytes_transferred)), 
@@ -183,7 +183,7 @@ void portmap_session::remote_write(const char* buffer, int buffer_length)
    boost::shared_ptr<std::vector<char> > buf(new 
       std::vector<char>(buffer, buffer + buffer_length));
 
-   // ·¢ËÍÊı¾İ.
+   // å‘é€æ•°æ®.
    m_remote_socket.async_write_some(boost::asio::buffer(*buf),
       make_custom_alloc_handler(m_allocator, 
       boost::bind(&portmap_session::handle_remote_write, 
